@@ -5,16 +5,18 @@ import {
   Skia,
   useClock,
   Fill,
+  Text,
+  useFont,
 } from "@shopify/react-native-skia";
 import { useDerivedValue } from "react-native-reanimated"; // Импортируем из reanimated
 
 const Index = () => {
   const clock = useClock();
-  // const font = useFont(require("./../assets/fonts/Ponomar.otf"), 60); // Обновленный путь к шрифту
+  const font = useFont(require("./../assets/fonts/Ponomar.otf"), 30); // Обновленный путь к шрифту
 
   // Используем useDerivedValue из react-native-reanimated для создания uniforms
   const uniforms = useDerivedValue(
-    () => ({ time: clock.value / 1000 }), // Переводим время в секунды
+    () => ({ time: clock.value / 4000 }), // Переводим время в секунды
     [clock]
   );
 
@@ -25,7 +27,7 @@ const Index = () => {
      vec4 main(vec2 fragCoord) {
       float r = sin(time) * 0.5 + 0.5;
       float g = cos(time) * 0.5 + 0.5;
-      float b = 0.5;
+      float b = 1;
       return vec4(r, g, b, 1.0);
     }
   `)!; // Используем !, чтобы указать, что source не будет null
@@ -34,9 +36,10 @@ const Index = () => {
 
   return (
     <Canvas style={{ flex: 1 }}>
-      <Fill>
+      <Fill color="black" />
+      <Text x={20} y={200} text="протоиерей Борис Бартов" font={font}>
         <Shader source={source} uniforms={uniforms} />
-      </Fill>
+      </Text>
     </Canvas>
   );
 };
