@@ -4,7 +4,9 @@ import Greeting from "./Greeting";
 import { BACKGROUND_COLOR, Stories } from "@/constants";
 import Animated, {
   useAnimatedRef,
+  useAnimatedScrollHandler,
   useScrollViewOffset,
+  useSharedValue,
 } from "react-native-reanimated";
 import {
   StoryListItem,
@@ -15,8 +17,12 @@ import {
 
 const Index: React.FC = () => {
   const [isGreetingComplete, setIsGreetingComplete] = useState(false); // Состояние завершения приветствия
-  const animatedRef = useAnimatedRef<Animated.ScrollView>();
-  const scrollOffset = useScrollViewOffset(animatedRef);
+  const scrollOffset = useSharedValue(0);
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: ({ contentOffset }) => {
+      scrollOffset.value = contentOffset.x;
+    },
+  });
 
   const ListPadding = WindowWidth - StoryListItemWidth;
 
@@ -32,7 +38,7 @@ const Index: React.FC = () => {
           }}
         >
           <Animated.ScrollView
-            ref={animatedRef}
+            onScroll={scrollHandler}
             horizontal
             snapToInterval={StoryListItemWidth}
             decelerationRate={"fast"}
