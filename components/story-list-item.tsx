@@ -1,6 +1,6 @@
 import React from "react";
 import { Image, type ImageSource } from "expo-image";
-import { Dimensions, StyleSheet } from "react-native";
+import { Dimensions, StyleSheet, Platform } from "react-native";
 import type { SharedValue } from "react-native-reanimated";
 import Animated, {
   Extrapolation,
@@ -18,51 +18,57 @@ type StoryListItemProps = {
   scrollOffset: SharedValue<number>;
 };
 
-export const StoryListItem: React.FC<StoryListItemProps> = React.memo(
-  ({ imageSource, index, scrollOffset }) => {
-    const rContainerStyle = useAnimatedStyle(() => {
-      const activeIndex = scrollOffset.value / StoryListItemWidth;
+export const StoryListItem: React.FC<StoryListItemProps> = React.memo(({
+  imageSource,
+  index,
+  scrollOffset,
+}) => {
+  const rContainerStyle = useAnimatedStyle(() => {
+    if (Platform.OS === 'android') {
+      return {}; // Упрощаем анимации для Android
+    }
 
-      const paddingLeft = (WindowWidth - StoryListItemWidth) / 4;
+    const activeIndex = scrollOffset.value / StoryListItemWidth;
+    const paddingLeft = (WindowWidth - StoryListItemWidth) / 4;
 
-      const translateX = interpolate(
-        activeIndex,
-        [index - 2, index - 1, index, index + 1], // input range [-1 ,0 , 1]
-        [120, 60, 0, -StoryListItemWidth - paddingLeft * 2], // output range
-        Extrapolation.CLAMP
-      );
-
-      const scale = interpolate(
-        activeIndex,
-        [index - 2, index - 1, index, index + 1],
-        [0.8, 0.9, 1, 1], // output range
-        Extrapolation.CLAMP
-      );
-
-      return {
-        left: paddingLeft,
-        transform: [
-          {
-            translateX: scrollOffset.value + translateX,
-          },
-          { scale },
-        ],
-      };
-    }, []);
-
-    return (
-      <Animated.View
-        style={[
-          styles.container,
-          { zIndex: -index }, // Динамически задаем zIndex
-          rContainerStyle,
-        ]}
-      >
-        <Image source={imageSource} style={styles.image} />
-      </Animated.View>
+    const translateX = interpolate(
+      activeIndex,
+      [index - 1, index, index + 1], // Уменьшили количество точек
+      [60, 0, -StoryListItemWidth - paddingLeft * 2], // Упростили выходные значения
+      Extrapolation.CLAMP
     );
-  }
-);
+
+    const scale = interpolate(
+      activeIndex,
+      [index - 1, index, index + 1], // Уменьшили количество точек
+      [0.9, 1, 1], // Упростили выходные значения
+      Extrapolation.CLAMP
+    );
+
+    return {
+      left: paddingLeft,
+      transform: [
+        { translateX: scrollOffset.value + translateX },
+        { scale },
+      ],
+    };
+  }, []);
+
+  return (
+    <Animated.View
+      style={[
+        styles.container,
+        Platform.OS === 'android' ? { elevation: -index } : { zIndex: -index }, // Используем elevation для Android
+        rContainerStyle,
+      ]}
+    >
+      <Image
+        source={imageSource}
+        style={styles.image}
+      />
+    </Animated.View>
+  );
+});
 
 const styles = StyleSheet.create({
   container: {
