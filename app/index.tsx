@@ -16,7 +16,7 @@ import {
 } from "@/components/story-list-item";
 
 const Index: React.FC = () => {
-  const [isGreetingComplete, setIsGreetingComplete] = useState(false); // Состояние завершения приветствия
+  const [isGreetingComplete, setIsGreetingComplete] = useState(false);
   const scrollOffset = useSharedValue(0);
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: ({ contentOffset }) => {
@@ -26,17 +26,11 @@ const Index: React.FC = () => {
 
   const ListPadding = WindowWidth - StoryListItemWidth;
 
-  // Если приветствие завершено, показываем основной контент
   if (isGreetingComplete) {
     return (
       <View style={styles.container}>
         <StatusBar barStyle={"dark-content"} />
-        <View
-          style={{
-            height: StoryListItemHeight,
-            width: "100%",
-          }}
-        >
+        <View style={styles.scrollContainer}>
           <Animated.ScrollView
             onScroll={scrollHandler}
             horizontal
@@ -44,28 +38,25 @@ const Index: React.FC = () => {
             decelerationRate={"fast"}
             disableIntervalMomentum
             showsHorizontalScrollIndicator={false}
-            scrollEventThrottle={16} // 1/60fps = 16ms
+            scrollEventThrottle={16}
             contentContainerStyle={{
               width: StoryListItemWidth * Stories.length + ListPadding,
             }}
           >
-            {Stories.map((story, index) => {
-              return (
-                <StoryListItem
-                  index={index}
-                  imageSource={story.image}
-                  key={index}
-                  scrollOffset={scrollOffset}
-                />
-              );
-            })}
+            {Stories.map((story, index) => (
+              <StoryListItem
+                key={index}
+                index={index}
+                imageSource={story.image}
+                scrollOffset={scrollOffset}
+              />
+            ))}
           </Animated.ScrollView>
         </View>
       </View>
     );
   }
 
-  // Иначе показываем приветствие
   return <Greeting onComplete={() => setIsGreetingComplete(true)} />;
 };
 
@@ -76,70 +67,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-});
-
-export default Index;
-
-/*
-
-import { BACKGROUND_COLOR, Stories } from './constants';
-import {
-  StoryListItem,
-  StoryListItemHeight,
-  StoryListItemWidth,
-  WindowWidth,
-} from './components/story-list-item';
-
-const App = () => {
-  const animatedRef = useAnimatedRef<Animated.ScrollView>();
-  const scrollOffset = useScrollViewOffset(animatedRef);
-
-  const ListPadding = WindowWidth - StoryListItemWidth;
-
-  return (
-    <View style={styles.container}>
-      <StatusBar style="light" />
-      <View
-        style={{
-          height: StoryListItemHeight,
-          width: '100%',
-        }}
-      >
-        <Animated.ScrollView
-          ref={animatedRef}
-          horizontal
-          snapToInterval={StoryListItemWidth}
-          decelerationRate={'fast'}
-          disableIntervalMomentum
-          showsHorizontalScrollIndicator={false}
-          scrollEventThrottle={16} // 1/60fps = 16ms
-          contentContainerStyle={{
-            width: StoryListItemWidth * Stories.length + ListPadding,
-          }}
-        >
-          {Stories.map((story, index) => {
-            return (
-              <StoryListItem
-                index={index}
-                imageSource={story.image}
-                key={index}
-                scrollOffset={scrollOffset}
-              />
-            );
-          })}
-        </Animated.ScrollView>
-      </View>
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: BACKGROUND_COLOR,
-    alignItems: 'center',
-    justifyContent: 'center',
+  scrollContainer: {
+    height: StoryListItemHeight,
+    width: "100%",
   },
 });
 
-*/
+export default Index;
