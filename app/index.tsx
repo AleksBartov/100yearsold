@@ -14,6 +14,7 @@ import {
   StoryListItemWidth,
   WindowWidth,
 } from "@/components/story-list-item";
+import Title from "@/components/Title";
 
 const Index: React.FC = () => {
   const [isGreetingComplete, setIsGreetingComplete] = useState(false); // Состояние завершения приветствия
@@ -29,38 +30,42 @@ const Index: React.FC = () => {
   // Если приветствие завершено, показываем основной контент
   if (isGreetingComplete) {
     return (
-      <View style={styles.container}>
-        <StatusBar barStyle={"dark-content"} />
-        <View
-          style={{
-            height: StoryListItemHeight,
-            width: "100%",
-          }}
-        >
-          <Animated.FlatList
-            data={Stories}
-            keyExtractor={(item, index) => index.toString()}
-            horizontal
-            renderItem={({ item, index }) => (
-              <StoryListItem
-                index={index}
-                imageSource={item.image}
-                key={index}
-                scrollOffset={scrollOffset}
-              />
-            )}
-            onScroll={scrollHandler}
-            snapToInterval={StoryListItemWidth}
-            decelerationRate={"fast"}
-            disableIntervalMomentum
-            showsHorizontalScrollIndicator={false}
-            scrollEventThrottle={Platform.OS === 'android' ? 32 : 16} // Увеличили для Android
-            contentContainerStyle={{
-              width: StoryListItemWidth * Stories.length + ListPadding,
+      <>
+        <View style={styles.container}>
+          <StatusBar barStyle={"dark-content"} />
+          <View
+            style={{
+              height: StoryListItemHeight,
+              width: "100%",
             }}
-          />
+          >
+            <Animated.ScrollView
+              onScroll={scrollHandler}
+              horizontal
+              snapToInterval={StoryListItemWidth}
+              decelerationRate={"fast"}
+              disableIntervalMomentum
+              showsHorizontalScrollIndicator={false}
+              scrollEventThrottle={Platform.OS === "android" ? 32 : 16}
+              contentContainerStyle={{
+                width: StoryListItemWidth * Stories.length + ListPadding,
+              }}
+            >
+              {Stories.map((story, index) => {
+                return (
+                  <StoryListItem
+                    index={index}
+                    imageSource={story.image}
+                    key={index}
+                    scrollOffset={scrollOffset}
+                  />
+                );
+              })}
+            </Animated.ScrollView>
+          </View>
         </View>
-      </View>
+        <Title />
+      </>
     );
   }
 
