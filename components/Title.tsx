@@ -15,13 +15,18 @@ import { useDerivedValue } from "react-native-reanimated";
 
 const Title = () => {
   const DOT_COLOR = [0.96, 0.82, 0.23];
-  const font = useFont(require("./../assets/fonts/Ponomar.otf"), 35);
+  const font = useFont(require("./../assets/fonts/Ponomar.otf"), 35)!;
+  const sub_font = useFont(require("./../assets/fonts/Ponomar.otf"), 20)!;
   const { width, height } = useWindowDimensions();
   const clock = useClock();
+  const text = "ДЕТСТВО";
+  const sub_text = "В";
+  const textMetrics = font.measureText(text);
+  const sub_textMetrics = sub_font.measureText(sub_text);
 
   const uniforms = useDerivedValue(
     () => ({
-      time: clock.value / 6000,
+      time: clock.value / 9000,
       color: DOT_COLOR,
       resolution: [width, 256],
     }),
@@ -67,9 +72,9 @@ const Title = () => {
   
         return vec4(mix(vec3(0.0), color, alpha), 1.0);
       }
-    `);
+    `)!;
 
-  if (!font || !effect) return null;
+  if (!font || !sub_font || !effect) return null;
   return (
     <Canvas
       style={{
@@ -86,7 +91,15 @@ const Title = () => {
           colors={["transparent", "black", "black", "black", "black"]}
         />
       </Rect>
-      <Text x={20} y={20} text="TITLE" font={font}>
+      <Text x={(width - textMetrics.width) / 2} y={120} text={text} font={font}>
+        <Shader source={effect} uniforms={uniforms} />
+      </Text>
+      <Text
+        x={(width - sub_textMetrics.width) / 2}
+        y={170}
+        text={sub_text}
+        font={sub_font}
+      >
         <Shader source={effect} uniforms={uniforms} />
       </Text>
     </Canvas>
