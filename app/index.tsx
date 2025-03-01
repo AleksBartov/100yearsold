@@ -43,7 +43,6 @@ const Index: React.FC = () => {
               onScroll={scrollHandler}
               horizontal
               snapToInterval={StoryListItemWidth}
-              decelerationRate={"fast"}
               disableIntervalMomentum
               showsHorizontalScrollIndicator={false}
               scrollEventThrottle={Platform.OS === "android" ? 32 : 16}

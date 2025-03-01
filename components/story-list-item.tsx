@@ -52,6 +52,13 @@ export const StoryListItem: React.FC<StoryListItemProps> = React.memo(
         Extrapolation.CLAMP
       );
 
+      const opacity = interpolate(
+        activeIndex,
+        [index - 1, index, index + 1], // Уменьшили количество точек
+        [0.3, 0.8, 0.3], // Упростили выходные значения
+        Extrapolation.CLAMP
+      );
+
       return {
         left: paddingLeft,
         transform: [
@@ -59,6 +66,7 @@ export const StoryListItem: React.FC<StoryListItemProps> = React.memo(
           { translateY },
           { scale },
         ],
+        opacity,
       };
     }, []);
 
