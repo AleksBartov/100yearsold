@@ -20,7 +20,7 @@ const Title = () => {
   const { width, height } = useWindowDimensions();
   const clock = useClock();
   const text = "ДЕТСТВО";
-  const sub_text = "В";
+  const sub_text = "В августе 1925 года в селе...";
   const textMetrics = font.measureText(text);
   const sub_textMetrics = sub_font.measureText(sub_text);
 
