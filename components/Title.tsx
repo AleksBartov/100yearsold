@@ -16,13 +16,10 @@ import { useDerivedValue } from "react-native-reanimated";
 const Title = () => {
   const DOT_COLOR = [0.96, 0.82, 0.23];
   const font = useFont(require("./../assets/fonts/Ponomar.otf"), 35)!;
-  const sub_font = useFont(require("./../assets/fonts/Ponomar.otf"), 20)!;
   const { width, height } = useWindowDimensions();
   const clock = useClock();
   const text = "ДЕТСТВО";
-  const sub_text = "В августе 1925 года в селе...";
   const textMetrics = font.measureText(text);
-  const sub_textMetrics = sub_font.measureText(sub_text);
 
   const uniforms = useDerivedValue(
     () => ({
@@ -74,7 +71,7 @@ const Title = () => {
       }
     `)!;
 
-  if (!font || !sub_font || !effect) return null;
+  if (!font || !effect) return null;
   return (
     <Canvas
       style={{
@@ -92,14 +89,6 @@ const Title = () => {
         />
       </Rect>
       <Text x={(width - textMetrics.width) / 2} y={120} text={text} font={font}>
-        <Shader source={effect} uniforms={uniforms} />
-      </Text>
-      <Text
-        x={(width - sub_textMetrics.width) / 2}
-        y={170}
-        text={sub_text}
-        font={sub_font}
-      >
         <Shader source={effect} uniforms={uniforms} />
       </Text>
     </Canvas>
