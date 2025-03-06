@@ -7,6 +7,7 @@ import Animated, {
   interpolate,
   SlideInRight,
   useAnimatedStyle,
+  useDerivedValue,
 } from "react-native-reanimated";
 import { Stories } from "@/constants";
 
@@ -22,40 +23,43 @@ type StoryListItemProps = {
 
 export const StoryListItem: React.FC<StoryListItemProps> = React.memo(
   ({ imageSource, index, scrollOffset }) => {
+    const activeIndex = useDerivedValue(
+      () => scrollOffset.value / StoryListItemWidth
+    );
+
     const rContainerStyle = useAnimatedStyle(() => {
-      const activeIndex = scrollOffset.value / StoryListItemWidth;
       const paddingLeft = (WindowWidth - StoryListItemWidth) / 2;
 
       const translateX = interpolate(
-        activeIndex,
-        [index - 2, index - 1, index, index + 1, index + 2], // Уменьшили количество точек
+        activeIndex.value,
+        [index - 2, index - 1, index, index + 1, index + 2],
         [
           StoryListItemWidth * 2,
           StoryListItemWidth,
           0,
           -StoryListItemWidth,
           -StoryListItemWidth * 2,
-        ], // Упростили выходные значения
+        ],
         Extrapolation.CLAMP
       );
       const translateY = interpolate(
-        activeIndex,
-        [index - 1, index, index + 1], // Уменьшили количество точек
-        [30, 0, 30], // Упростили выходные значения
+        activeIndex.value,
+        [index - 1, index, index + 1],
+        [30, 0, 30],
         Extrapolation.CLAMP
       );
 
       const scale = interpolate(
-        activeIndex,
-        [index - 1, index, index + 1], // Уменьшили количество точек
-        [0.8, 1, 0.8], // Упростили выходные значения
+        activeIndex.value,
+        [index - 1, index, index + 1],
+        [0.8, 1, 0.8],
         Extrapolation.CLAMP
       );
 
       const opacity = interpolate(
-        activeIndex,
-        [index - 1, index, index + 1], // Уменьшили количество точек
-        [0.3, 0.8, 0.3], // Упростили выходные значения
+        activeIndex.value,
+        [index - 1, index, index + 1],
+        [0.3, 0.8, 0.3],
         Extrapolation.CLAMP
       );
 

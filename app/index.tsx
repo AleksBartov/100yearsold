@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StatusBar, View, StyleSheet, Platform } from "react-native";
 import Greeting from "./Greeting";
-import { BACKGROUND_COLOR, Stories } from "@/constants";
+import { BACKGROUND_COLOR, Colors, Stories } from "@/constants";
 import Animated, {
   useAnimatedRef,
   useAnimatedScrollHandler,
-  useScrollViewOffset,
   useSharedValue,
+  cancelAnimation,
 } from "react-native-reanimated";
 import {
   StoryListItem,
@@ -17,8 +17,9 @@ import {
 import Title from "@/components/Title";
 
 const Index: React.FC = () => {
-  const [isGreetingComplete, setIsGreetingComplete] = useState(false); // Состояние завершения приветствия
+  const [isGreetingComplete, setIsGreetingComplete] = useState(false);
   const scrollOffset = useSharedValue(0);
+
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: ({ contentOffset }) => {
       scrollOffset.value = contentOffset.x;
@@ -27,7 +28,14 @@ const Index: React.FC = () => {
 
   const ListPadding = WindowWidth - StoryListItemWidth;
 
-  // Если приветствие завершено, показываем основной контент
+  // Очистка shared value при размонтировании компонента
+  useEffect(() => {
+    return () => {
+      // Останавливаем анимации, связанные с scrollOffset
+      cancelAnimation(scrollOffset);
+    };
+  }, []);
+
   if (isGreetingComplete) {
     return (
       <>
@@ -68,14 +76,13 @@ const Index: React.FC = () => {
     );
   }
 
-  // Иначе показываем приветствие
   return <Greeting onComplete={() => setIsGreetingComplete(true)} />;
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: BACKGROUND_COLOR,
+    backgroundColor: Colors.background,
     alignItems: "center",
     justifyContent: "center",
   },

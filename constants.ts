@@ -20,3 +20,8 @@ export const Stories = [
 ];
 
 export const BACKGROUND_COLOR = "black";
+
+export const Colors = {
+  background: "#303030",
+  white: "#f7fff7",
+};

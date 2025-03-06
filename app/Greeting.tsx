@@ -14,6 +14,7 @@ import Animated, {
   useDerivedValue,
 } from "react-native-reanimated";
 import { StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
+import { Colors } from "@/constants";
 
 type GreetingProps = {
   onComplete: () => void; // Колбэк, который вызывается после завершения анимации
@@ -25,7 +26,7 @@ const Greeting: React.FC<GreetingProps> = ({ onComplete }) => {
   const clock = useClock();
   const font = useFont(require("./../assets/fonts/Ponomar.otf"), fontSize);
 
-  const DOT_COLOR = [0.96, 0.82, 0.23]; // Золотистый цвет в RGB
+  const DOT_COLOR = [0.9686, 1.0, 0.9686];
   const [isStarted, setIsStarted] = useState(false); // Состояние для начала анимации скрытия
   const [isVisible, setIsVisible] = useState(true); // Состояние для видимости компонента
   const [progress, setProgress] = useState(0); // Прогресс анимации
@@ -82,43 +83,45 @@ const Greeting: React.FC<GreetingProps> = ({ onComplete }) => {
 
   const effect = Skia.RuntimeEffect.Make(`
     uniform float time;
-    uniform vec3 color;
-    uniform vec2 resolution;
+uniform vec3 color;
+uniform vec2 resolution;
 
-    float hash(vec2 p) {
-      return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
-    }
+float hash(vec2 p) {
+  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+}
 
-    float smoothNoise(vec2 p) {
-      vec2 i = floor(p);
-      vec2 f = fract(p);
-      float a = hash(i);
-      float b = hash(i + vec2(1.0, 0.0));
-      float c = hash(i + vec2(0.0, 1.0));
-      float d = hash(i + vec2(1.0, 1.0));
-      vec2 u = f * f * (3.0 - 2.0 * f);
-      return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
-    }
+float smoothNoise(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  float a = hash(i);
+  float b = hash(i + vec2(1.0, 0.0));
+  float c = hash(i + vec2(0.0, 1.0));
+  float d = hash(i + vec2(1.0, 1.0));
+  vec2 u = f * f * (3.0 - 2.0 * f);
+  return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+}
 
-    vec4 main(vec2 fragCoord) {
-      vec2 uv = fragCoord / resolution;
+vec4 main(vec2 fragCoord) {
+  vec2 uv = fragCoord / resolution;
 
-      // Определяем направление заливки (случайное)
-      float direction = hash(vec2(0.5, 0.5)) > 0.5 ? 1.0 : -1.0;
+  // Определяем направление заливки (случайное)
+  float direction = hash(vec2(0.5, 0.5)) > 0.5 ? 1.0 : -1.0;
 
-      // Прогресс заливки
-      float progress = clamp(time, 0.0, 1.0);
+  // Прогресс заливки
+  float progress = clamp(time, 0.0, 1.0);
 
-      // Ветвистый эффект с использованием шума
-      float noise = smoothNoise(uv * 10.0 + time * 2.0) * 0.2;
-      float fill = direction > 0.0 ? uv.x : 1.0 - uv.x;
-      fill += noise;
+  // Ветвистый эффект с использованием шума
+  float noise = smoothNoise(uv * 10.0 + time * 2.0) * 0.2;
+  float fill = direction > 0.0 ? uv.x : 1.0 - uv.x;
+  fill += noise;
 
-      // Плавный переход
-      float alpha = smoothstep(0.0, 0.1, fill - (1.0 - progress));
+  // Плавный переход
+  float alpha = smoothstep(0.0, 0.1, fill - (1.0 - progress));
 
-      return vec4(mix(vec3(0.0), color, alpha), 1.0);
-    }
+  // Начальный цвет текста - полностью прозрачный
+  vec3 initialColor = vec3(0.0); // Черный цвет (или любой другой, но с alpha = 0)
+  return vec4(mix(initialColor, color, alpha), alpha); // Добавляем alpha для прозрачности
+}
   `);
 
   if (!font || !effect) return null;
@@ -133,7 +136,7 @@ const Greeting: React.FC<GreetingProps> = ({ onComplete }) => {
     <>
       <StatusBar barStyle={"light-content"} />
       <Canvas style={{ flex: 1 }}>
-        <Fill color="rgba(0.0, 0.0, 0.0, 1.0)" />
+        <Fill color="rgba(48.0, 48.0, 48.0, 1.0)" />
         {texts.map((text, index) => {
           const textMetrics = font.measureText(text);
           return (
@@ -165,7 +168,7 @@ const Greeting: React.FC<GreetingProps> = ({ onComplete }) => {
             onPress={handleStart}
             style={{
               opacity: 0.5,
-              borderColor: "#f5fb2f",
+              borderColor: Colors.white,
               borderWidth: 1,
               borderRadius: 4,
               paddingHorizontal: 30 * 1.613,
@@ -175,7 +178,7 @@ const Greeting: React.FC<GreetingProps> = ({ onComplete }) => {
             }}
           >
             <Animated.Text
-              style={{ color: "#f5fb2f", fontSize: 20, textAlign: "center" }}
+              style={{ color: Colors.white, fontSize: 20, textAlign: "center" }}
             >
               начать
             </Animated.Text>
