@@ -15,6 +15,7 @@ import {
   WindowWidth,
 } from "@/components/story-list-item";
 import Title from "@/components/Title";
+import PhotoReveal from "@/components/PhotoReveal";
 
 const Index: React.FC = () => {
   const [isGreetingComplete, setIsGreetingComplete] = useState(false);
@@ -41,37 +42,8 @@ const Index: React.FC = () => {
       <>
         <View style={styles.container}>
           <StatusBar barStyle={"dark-content"} />
-          <View
-            style={{
-              height: StoryListItemHeight,
-              width: "100%",
-            }}
-          >
-            <Animated.ScrollView
-              onScroll={scrollHandler}
-              horizontal
-              snapToInterval={StoryListItemWidth}
-              disableIntervalMomentum
-              showsHorizontalScrollIndicator={false}
-              scrollEventThrottle={Platform.OS === "android" ? 32 : 16}
-              contentContainerStyle={{
-                width: StoryListItemWidth * Stories.length + ListPadding,
-              }}
-            >
-              {Stories.map((story, index) => {
-                return (
-                  <StoryListItem
-                    index={index}
-                    imageSource={story.image}
-                    key={index}
-                    scrollOffset={scrollOffset}
-                  />
-                );
-              })}
-            </Animated.ScrollView>
-          </View>
+          <PhotoReveal imageSource={require("./../assets/images/boris.jpg")} />
         </View>
-        <Title />
       </>
     );
   }
